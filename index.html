@@ -157,7 +157,7 @@
   }
   .ai-prompt-text {
     padding: 10px 14px; font-size: 0.78rem; color: var(--text);
-    line-height: 1.7; max-height: 140px; overflow-y: auto;
+    line-height: 1.7; max-height: 220px; overflow-y: auto;
     white-space: pre-wrap; word-break: break-all;
   }
   .ai-copy-btn { margin: 0; border-radius: 0 0 8px 8px; border-top: 1px solid var(--border); }
@@ -535,8 +535,19 @@ function getSelectedSiteUrl() {
 
 function updateAIPrompt() {
   const siteUrl = getSelectedSiteUrl();
-  document.getElementById('aiPrompt').textContent =
-    `帮我激活 JetBrains IDE。这个工具支持 IntelliJ IDEA、PyCharm、WebStorm、DataGrip、GoLand、CLion、Rider 等 JetBrains 产品；请根据我实际使用的 IDE 选择对应产品，如果我没有指定产品，就不勾选任何产品，生成全家桶激活码。步骤：1. 从 ${siteUrl} 下载 ja-netfilter.zip 并解压 2. 找到 IDE 的 vmoptions 文件（macOS 在 ~/Library/Application Support/JetBrains/产品名/vmoptions，Windows 在 %APPDATA%\\JetBrains\\产品名\\vmoptions）3. 在末尾添加 -javaagent:解压路径/ja-netfilter.jar 4. 打开 ${siteUrl} 生成激活码并复制 5. 重启 IDE 粘贴激活码完成激活。产品选择示例：如果我使用 DataGrip，就选择 DataGrip；如果我使用 PyCharm，就选择 PyCharm；也可以按我实际使用的其他 JetBrains 产品选择。被授权人名字：User。`;
+  const productNames = PRODUCTS.map(p => p.name).join('、');
+  const promptLines = [
+    '帮我配置 JetBrains IDE 的本地学习研究环境。',
+    `工具地址：${siteUrl}`,
+    `支持产品：${productNames} 等 JetBrains 产品，以及付费插件。`,
+    '请先根据我的实际需求判断目标：',
+    '1. 如果我要使用某一个 JetBrains 产品，就在网页的产品列表里只勾选对应产品，然后生成激活码。',
+    '2. 如果我要使用全部 JetBrains 产品或全家桶，就不要勾选任何产品，直接生成可用于全部产品的激活码。',
+    `操作步骤：从 ${siteUrl} 下载 ja-netfilter.zip 并解压；找到 IDE 的 vmoptions 文件；在文件末尾添加 -javaagent:解压路径/ja-netfilter.jar；重启 IDE；打开工具地址生成激活码；在 IDE 激活窗口选择 Activation code 并粘贴。`,
+    'vmoptions 常见位置：macOS 在 ~/Library/Application Support/JetBrains/产品名/vmoptions，Windows 在 %APPDATA%\\JetBrains\\产品名\\vmoptions。',
+    '如果我没有明确说要哪个产品，请先问我是要激活单个产品还是全部产品，不要默认选择某一个产品。被授权人名字可以先用 User。'
+  ];
+  document.getElementById('aiPrompt').textContent = promptLines.join('\n');
 }
 
 function copyAI() {
