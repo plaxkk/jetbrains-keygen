@@ -162,6 +162,26 @@
   }
   .ai-copy-btn { margin: 0; border-radius: 0 0 8px 8px; border-top: 1px solid var(--border); }
   .ai-hint { font-size: 0.8rem; color: #d2991d; margin-top: 8px; margin-bottom: 0 !important; }
+  .site-options {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px; margin: 12px 0;
+  }
+  .site-option {
+    display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 10px 12px;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    cursor: pointer; color: var(--text);
+  }
+  .site-option:has(input:checked) { border-color: var(--accent); background: #101826; }
+  .site-option input { width: auto; margin-top: 4px; flex-shrink: 0; }
+  .site-option strong { display: block; font-size: 0.84rem; color: var(--accent); }
+  .site-option code {
+    display: block; margin-top: 3px; color: #e6edf3; font-size: 0.72rem;
+    white-space: normal; overflow-wrap: anywhere;
+  }
+  .site-note { display: block; margin-top: 4px; color: var(--orange); font-size: 0.74rem; }
+  @media (max-width: 560px) {
+    .site-options { grid-template-columns: 1fr; }
+  }
 
   footer { text-align: center; padding: 32px; color: var(--muted); font-size: 0.75rem; }
   footer a { color: var(--accent); }
@@ -219,9 +239,26 @@
       <span class="ai-badge">推荐</span>
     </div>
     <p>如果你有 Claude Code / Cursor / Hermes Agent / Copilot CLI 等 AI 编程助手，<br>把下面这段话发给它，AI 会自动完成下载→解压→配置→激活全流程：</p>
+    <div class="site-options" role="radiogroup" aria-label="选择访问地址">
+      <label class="site-option">
+        <input type="radio" name="siteUrl" value="https://jetbrains-keygen.kkplayit.online/" checked>
+        <span>
+          <strong>线路一</strong>
+          <code>https://jetbrains-keygen.kkplayit.online/</code>
+        </span>
+      </label>
+      <label class="site-option">
+        <input type="radio" name="siteUrl" value="https://jetbrains-keygen.vercel.app">
+        <span>
+          <strong>线路二</strong>
+          <code>https://jetbrains-keygen.vercel.app</code>
+          <span class="site-note">国内用户需要🪜访问</span>
+        </span>
+      </label>
+    </div>
     <div class="ai-prompt-box">
       <div class="ai-prompt-label">📋 复制以下 Prompt 发给 AI</div>
-      <div class="ai-prompt-text" id="aiPrompt">帮我激活 JetBrains IDE（DataGrip 或任意产品）。步骤：1. 从 https://jetbrains-keygen.vercel.app 下载 ja-netfilter.zip 并解压 2. 找到 IDE 的 vmoptions 文件（macOS 在 ~/Library/Application Support/JetBrains/产品名/vmoptions，Windows 在 %APPDATA%\JetBrains\产品名\vmoptions）3. 在末尾添加 -javaagent:解压路径/ja-netfilter.jar 4. 打开 https://jetbrains-keygen.vercel.app 生成激活码并复制 5. 重启 IDE 粘贴激活码完成激活。我需要选择的产品是：DataGrip，被授权人名字：User。</div>
+      <div class="ai-prompt-text" id="aiPrompt"></div>
       <button class="copy ai-copy-btn" onclick="copyAI()">📋 一键复制 Prompt</button>
     </div>
     <p class="ai-hint">💡 你的 AI 助手会一步不差地执行，全程无需手动操作。</p>
@@ -397,10 +434,31 @@ function switchTab(platform) {
 }
 
 // === Copy helpers ===
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  const ok = document.execCommand('copy');
+  ta.remove();
+  return ok ? Promise.resolve() : Promise.reject(new Error('copy failed'));
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+
 function copyText(elemId) {
   const el = document.getElementById(elemId);
   const text = el.textContent.trim();
-  navigator.clipboard.writeText(text).then(() => showToast('已复制'));
+  copyToClipboard(text)
+    .then(() => showToast('已复制'))
+    .catch(() => showToast('复制失败，请手动复制'));
 }
 
 function showToast(msg) {
@@ -461,17 +519,37 @@ function doGenerate() {
 
 function copyCode() {
   const code = document.getElementById('codeDisplay').textContent;
-  navigator.clipboard.writeText(code).then(() => {
-    document.getElementById('copiedMsg').classList.add('show');
-    setTimeout(() => document.getElementById('copiedMsg').classList.remove('show'), 2000);
-    showToast('激活码已复制！');
-  });
+  copyToClipboard(code)
+    .then(() => {
+      document.getElementById('copiedMsg').classList.add('show');
+      setTimeout(() => document.getElementById('copiedMsg').classList.remove('show'), 2000);
+      showToast('激活码已复制！');
+    })
+    .catch(() => showToast('复制失败，请手动复制'));
+}
+
+function getSelectedSiteUrl() {
+  const selected = document.querySelector('input[name="siteUrl"]:checked');
+  return selected ? selected.value : 'https://jetbrains-keygen.kkplayit.online/';
+}
+
+function updateAIPrompt() {
+  const siteUrl = getSelectedSiteUrl();
+  document.getElementById('aiPrompt').textContent =
+    `帮我激活 JetBrains IDE（DataGrip 或任意产品）。步骤：1. 从 ${siteUrl} 下载 ja-netfilter.zip 并解压 2. 找到 IDE 的 vmoptions 文件（macOS 在 ~/Library/Application Support/JetBrains/产品名/vmoptions，Windows 在 %APPDATA%\\JetBrains\\产品名\\vmoptions）3. 在末尾添加 -javaagent:解压路径/ja-netfilter.jar 4. 打开 ${siteUrl} 生成激活码并复制 5. 重启 IDE 粘贴激活码完成激活。我需要选择的产品是：DataGrip，被授权人名字：User。`;
 }
 
 function copyAI() {
   const text = document.getElementById('aiPrompt').textContent.trim();
-  navigator.clipboard.writeText(text).then(() => showToast('Prompt 已复制！发给 AI 即可'));
+  copyToClipboard(text)
+    .then(() => showToast('Prompt 已复制！发给 AI 即可'))
+    .catch(() => showToast('复制失败，请手动复制'));
 }
+
+document.querySelectorAll('input[name="siteUrl"]').forEach(input => {
+  input.addEventListener('change', updateAIPrompt);
+});
+updateAIPrompt();
 
 // Auto-expand step 1
 document.getElementById('step1').classList.add('active');
