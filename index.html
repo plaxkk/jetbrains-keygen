@@ -165,6 +165,16 @@
 
   footer { text-align: center; padding: 32px; color: var(--muted); font-size: 0.75rem; }
   footer a { color: var(--accent); }
+
+  .disclaimer {
+    max-width: 640px; margin: 0 auto 20px; text-align: left;
+    background: #0d1117; border: 1px solid #21262d; border-radius: 10px;
+    padding: 20px 24px; font-size: 0.75rem; color: #8b949e; line-height: 1.8;
+  }
+  .disclaimer h3 { font-size: 0.9rem; color: #c9d1d9; margin-bottom: 12px; }
+  .disclaimer p { margin-bottom: 8px; }
+  .disclaimer strong { color: #c9d1d9; }
+  .footer-line { margin-top: 16px; }
 </style>
 </head>
 <body>
@@ -335,7 +345,15 @@ Add-Content "$env:APPDATA\JetBrains\产品名202x.x\产品名.vmoptions" "`n-jav
 </div>
 
 <footer>
-  <p>仅供学习与研究使用，请支持 <a href="https://www.jetbrains.com/" target="_blank">JetBrains</a> 正版</p>
+  <div class="disclaimer">
+    <h3>⚖️ 免责声明</h3>
+    <p><strong>教育目的：</strong>本网站及 ja-netfilter 工具仅供学习研究 Java Agent、字节码修改、RSA 签名等技术原理。禁止用于任何商业目的。</p>
+    <p><strong>非官方：</strong>本站与 JetBrains s.r.o. 无任何关联、赞助或授权关系。JetBrains、IntelliJ IDEA、DataGrip 等均为 JetBrains s.r.o. 的注册商标。</p>
+    <p><strong>用户责任：</strong>使用本工具激活 JetBrains 产品的行为由用户自行承担全部法律责任。本站仅提供技术研究工具，不鼓励、不提倡规避软件授权。如您用于商业或工作用途，请前往 <a href="https://www.jetbrains.com/store/" target="_blank">JetBrains 官方商店</a> 购买正版授权，支持开发者持续改进产品。</p>
+    <p><strong>无担保：</strong>本工具按"原样"提供，不提供任何明示或暗示的担保，包括但不限于适销性、特定用途适用性。工具可能因 JetBrains 版本更新而失效。</p>
+    <p><strong>开源协议：</strong>ja-netfilter 及本网站代码基于 MIT 协议开源，仅供非商业研究使用。项目仓库：<a href="https://github.com/plaxkk/jetbrains-keygen" target="_blank">github.com/plaxkk/jetbrains-keygen</a></p>
+  </div>
+  <p class="footer-line">仅供学习与研究使用 · 请支持 <a href="https://www.jetbrains.com/" target="_blank">JetBrains</a> 正版</p>
 </footer>
 
 <script>
