@@ -1,0 +1,10 @@
+{
+  "headers": [
+    {
+      "source": "/ja-netfilter.zip",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=ja-netfilter.zip" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JetBrains 激活码生成器 - 免费用于学习研究</title>
+<script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #c9d1d9; --muted: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --green-bg: #238636; --red: #f85149;
+    --orange: #d2991d; --step-active: #1f6feb;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    min-height: 100vh;
+  }
+  .header {
+    background: var(--card); border-bottom: 1px solid var(--border);
+    padding: 16px 24px; text-align: center; position: sticky; top: 0; z-index: 10;
+  }
+  .header h1 { font-size: 1.3rem; color: var(--accent); }
+  .header p { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .container { max-width: 700px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Steps */
+  .step { margin-bottom: 32px; }
+  .step-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+    padding: 12px 16px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; cursor: pointer; user-select: none;
+    transition: border-color .2s;
+  }
+  .step-header:hover { border-color: var(--accent); }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .step.active .step-num { background: var(--step-active); color: #fff; }
+  .step.done .step-num { background: var(--green-bg); color: #fff; }
+  .step-title { font-weight: 600; font-size: 1rem; }
+  .step-body {
+    display: none; padding: 16px 20px; background: var(--card);
+    border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px;
+  }
+  .step.active .step-body { display: block; }
+
+  /* Form elements */
+  label { display: block; font-size: 0.85rem; color: var(--muted); margin: 12px 0 4px; }
+  label:first-child { margin-top: 0; }
+  input, select, textarea {
+    width: 100%; padding: 8px 12px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text); font-size: 0.9rem;
+  }
+  input:focus, select:focus { border-color: var(--accent); outline: none; }
+  .products { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .products label {
+    display: flex; align-items: center; gap: 6px; font-size: 0.82rem;
+    margin: 0; padding: 4px 0; cursor: pointer;
+  }
+  .products input[type=checkbox] { width: auto; margin: 0; }
+  button {
+    width: 100%; padding: 10px 16px; background: var(--green-bg);
+    border: 1px solid rgba(46,160,67,0.4); border-radius: 8px;
+    color: #fff; font-size: 0.95rem; cursor: pointer; font-weight: 600;
+    margin-top: 12px; transition: background .2s;
+  }
+  button:hover { background: #2ea043; }
+  button.copy { background: var(--card); border-color: var(--border); color: var(--accent); }
+  button.copy:hover { background: #1a2235; }
+  button.next { background: var(--step-active); border-color: transparent; }
+
+  /* Code display */
+  .code-box {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.72rem; word-break: break-all; max-height: 100px;
+    overflow-y: auto; color: var(--green); margin: 8px 0;
+    line-height: 1.4;
+  }
+  .copied { color: var(--green); font-size: 0.8rem; margin-left: 8px; display: none; }
+  .copied.show { display: inline; }
+
+  /* Copy command */
+  .copy-cmd {
+    display: flex; gap: 8px; align-items: center;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; margin: 8px 0;
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85rem;
+  }
+  .copy-cmd code { flex: 1; color: #e6edf3; word-break: break-all; }
+  .copy-cmd .copy-btn {
+    width: auto; margin: 0; padding: 4px 12px; font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  /* Platform tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+  .tab {
+    padding: 6px 16px; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px 6px 0 0; color: var(--muted); cursor: pointer; font-size: 0.82rem;
+  }
+  .tab.active { background: var(--card); color: var(--text); border-bottom-color: var(--card); }
+  .tab-content { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 0 6px 6px 6px; padding: 14px; margin-top: -1px; }
+  .tab-content.active { display: block; }
+
+  .tip { padding: 10px 14px; background: #1a2332; border-left: 3px solid var(--accent); border-radius: 4px; font-size: 0.82rem; color: var(--muted); margin: 10px 0; }
+  .tip strong { color: var(--accent); }
+  .warn { background: #2d1a1a; border-left-color: var(--red); }
+  .warn strong { color: var(--red); }
+
+  footer { text-align: center; padding: 32px; color: var(--muted); font-size: 0.75rem; }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🔑 JetBrains 激活码生成器</h1>
+  <p>仅供学习研究 · 请支持正版 · 三步完成激活</p>
+</div>
+
+<div class="container">
+
+  <!-- ========== STEP 1: Download Agent ========== -->
+  <div class="step active" id="step1">
+    <div class="step-header" onclick="toggleStep('step1')">
+      <div class="step-num">1</div>
+      <div class="step-title">下载 ja-netfilter 代理工具</div>
+    </div>
+    <div class="step-body">
+      <p style="margin-bottom:12px">ja-netfilter 是一个本地 Java 代理，让 IDE 接受自定义激活码。必须安装在你的电脑上。</p>
+      <button onclick="window.open('ja-netfilter.zip','_blank')">📥 下载 ja-netfilter.zip (311 KB)</button>
+      <div class="tip" style="margin-top:12px">
+        <strong>💡</strong> 下载后解压到任意目录（建议放 <code>~/ja-netfilter/</code>），记住解压路径，下一步要用。
+      </div>
+      <button class="copy next" style="margin-top:8px" onclick="nextStep('step2')">✅ 已下载，下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ========== STEP 2: VM Options ========== -->
+  <div class="step" id="step2">
+    <div class="step-header" onclick="toggleStep('step2')">
+      <div class="step-num">2</div>
+      <div class="step-title">配置 IDE 的 VM Options（最关键一步）</div>
+    </div>
+    <div class="step-body">
+      <!-- Platform tabs -->
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('mac')">🍎 macOS</div>
+        <div class="tab" onclick="switchTab('win')">🪟 Windows</div>
+        <div class="tab" onclick="switchTab('linux')">🐧 Linux</div>
+      </div>
+
+      <div class="tab-content active" id="tab-mac">
+        <p style="margin-bottom:8px"><strong>方法 1：图形界面（推荐）</strong></p>
+        <ol style="padding-left:20px; font-size:0.88rem; line-height:2">
+          <li>打开任意 JetBrains IDE</li>
+          <li>菜单栏 → <strong>Help</strong> → <strong>Edit Custom VM Options...</strong></li>
+          <li>在弹出的文件末尾添加一行（把路径换成你的解压路径）：</li>
+        </ol>
+      </div>
+      <div class="tab-content" id="tab-win">
+        <p style="margin-bottom:8px"><strong>方法 1：图形界面（推荐）</strong></p>
+        <ol style="padding-left:20px; font-size:0.88rem; line-height:2">
+          <li>打开任意 JetBrains IDE</li>
+          <li>菜单栏 → <strong>Help</strong> → <strong>Edit Custom VM Options...</strong></li>
+          <li>在弹出的文件末尾添加一行（把路径换成你的解压路径）：</li>
+        </ol>
+      </div>
+      <div class="tab-content" id="tab-linux">
+        <p style="margin-bottom:8px"><strong>方法 1：图形界面（推荐）</strong></p>
+        <ol style="padding-left:20px; font-size:0.88rem; line-height:2">
+          <li>打开任意 JetBrains IDE</li>
+          <li>菜单栏 → <strong>Help</strong> → <strong>Edit Custom VM Options...</strong></li>
+          <li>在弹出的文件末尾添加一行（把路径换成你的解压路径）：</li>
+        </ol>
+      </div>
+
+      <div class="copy-cmd" id="vmAgentCmd">
+        <code id="vmAgentCode">-javaagent:/Users/你的用户名/ja-netfilter/ja-netfilter.jar</code>
+        <button class="copy copy-btn" onclick="copyText('vmAgentCode')">复制</button>
+      </div>
+
+      <p style="margin-top:12px; margin-bottom:8px"><strong>方法 2：手动编辑文件</strong></p>
+      <div class="copy-cmd" id="vmPathCmd1">
+        <code id="vmPath1"># macOS/Linux 用户，终端执行：
+echo -e '\n-javaagent:/你的路径/ja-netfilter.jar' >> "$HOME/Library/Application Support/JetBrains/产品名202x.x/产品名.vmoptions"</code>
+        <button class="copy copy-btn" onclick="copyText('vmPath1')">复制</button>
+      </div>
+      <div class="copy-cmd" id="vmPathCmd2">
+        <code id="vmPath2"># Windows 用户，PowerShell 执行：
+Add-Content "$env:APPDATA\JetBrains\产品名202x.x\产品名.vmoptions" "`n-javaagent:C:\你的路径\ja-netfilter.jar"</code>
+        <button class="copy copy-btn" onclick="copyText('vmPath2')">复制</button>
+      </div>
+
+      <div class="warn tip" style="margin-top:12px">
+        <strong>⚠️ 常见错误：</strong>
+        <ul style="padding-left:16px; margin-top:4px">
+          <li>路径必须用你实际的解压路径，不能直接照抄</li>
+          <li>如果 IDE 打不开，说明路径填错了——删掉 vmoptions 文件重来</li>
+          <li>修改完后必须<b>完全退出 IDE 再重新打开</b></li>
+        </ul>
+      </div>
+      <button class="copy next" style="margin-top:8px" onclick="nextStep('step3')">✅ 已配置，下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ========== STEP 3: Generate & Activate ========== -->
+  <div class="step" id="step3">
+    <div class="step-header" onclick="toggleStep('step3')">
+      <div class="step-num">3</div>
+      <div class="step-title">生成激活码 & 激活 IDE</div>
+    </div>
+    <div class="step-body">
+      <label>被授权人（显示在 IDE 的 About 页面）</label>
+      <input id="name" value="User" placeholder="你的名字">
+
+      <label>过期日期</label>
+      <input id="expiry" type="date" value="2099-12-31">
+
+      <label>选择产品（不选 = 全家桶全部激活）</label>
+      <div class="products" id="productList"></div>
+
+      <button onclick="doGenerate()">✨ 生成激活码</button>
+
+      <div style="display:none; margin-top:16px" id="genResult">
+        <label style="color:var(--green)">✅ 激活码已生成（有效期到 <span id="expiryLabel"></span>）</label>
+        <div class="code-box" id="codeDisplay"></div>
+        <button class="copy" onclick="copyCode()">📋 复制激活码 <span class="copied" id="copiedMsg">✓ 已复制</span></button>
+
+        <div class="tip" style="margin-top:12px">
+          <strong>🎯 最后一步：</strong><br>
+          打开 IDE（确保已完成步骤 2）→ 出现激活窗口 → 选择 <strong>Activation code</strong> → 粘贴 → 点 <strong>Activate</strong>。
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>仅供学习与研究使用，请支持 <a href="https://www.jetbrains.com/" target="_blank">JetBrains</a> 正版</p>
+</footer>
+
+<script>
+// === Product data ===
+const PRODUCTS = [
+  {code:'II',name:'IntelliJ IDEA'},{code:'PS',name:'PhpStorm'},
+  {code:'DB',name:'DataGrip'},{code:'RM',name:'RubyMine'},
+  {code:'WS',name:'WebStorm'},{code:'RD',name:'Rider'},
+  {code:'CL',name:'CLion'},{code:'PC',name:'PyCharm'},
+  {code:'GO',name:'GoLand'},{code:'DS',name:'DataSpell'},
+  {code:'DM',name:'dotMemory'},{code:'QA',name:'Aqua'},
+  {code:'RR',name:'RustRover'},{code:'AC',name:'AppCode'}
+];
+
+// Init product checkboxes
+const plist = document.getElementById('productList');
+PRODUCTS.forEach(p => {
+  const lb = document.createElement('label');
+  lb.innerHTML = `<input type="checkbox" value="${p.code}" id="p_${p.code}">${p.name}`;
+  plist.appendChild(lb);
+});
+document.getElementById('p_DB').checked = true;
+
+// === Step navigation ===
+function toggleStep(id) {
+  const step = document.getElementById(id);
+  step.classList.toggle('active');
+}
+
+function nextStep(id) {
+  const step = document.getElementById(id);
+  step.classList.add('active');
+  step.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function switchTab(platform) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.tab:nth-child(${platform==='mac'?1:platform==='win'?2:3})`).classList.add('active');
+  document.getElementById(`tab-${platform}`).classList.add('active');
+}
+
+// === Copy helpers ===
+function copyText(elemId) {
+  const el = document.getElementById(elemId);
+  const text = el.textContent.trim();
+  navigator.clipboard.writeText(text).then(() => showToast('已复制'));
+}
+
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div'); t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#238636;color:#fff;padding:8px 20px;border-radius:8px;font-size:0.85rem;z-index:100;transition:opacity .3s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.style.opacity = '0', 1500);
+}
+
+// === Key generation ===
+function ensureKeyPair() {
+  if (window._kp) return window._kp;
+  const k = forge.pki.rsa.generateKeyPair(2048);
+  const c = forge.pki.createCertificate();
+  c.publicKey = k.publicKey;
+  c.serialNumber = '01' + Date.now();
+  c.validity.notBefore = new Date();
+  c.validity.notAfter = new Date('2099-12-31');
+  const a = [{name:'commonName',value:'JetProfile CA'}];
+  c.setSubject(a); c.setIssuer(a);
+  c.sign(k.privateKey, forge.md.sha256.create());
+  window._kp = {sk:k.privateKey, pk:k.publicKey, cert:c};
+  return window._kp;
+}
+
+function doGenerate() {
+  const name = document.getElementById('name').value || 'User';
+  const expiry = document.getElementById('expiry').value || '2099-12-31';
+  const selected = Array.from(document.querySelectorAll('#productList input:checked')).map(cb => cb.value);
+  const codes = selected.length > 0 ? selected : PRODUCTS.map(p => p.code);
+
+  const licenseId = forge.util.bytesToHex(forge.random.getBytes(16));
+  const lp = {
+    licenseId, licenseeName: name, assigneeName: name,
+    products: codes.map(c => ({code:c, fallbackDate:expiry, paidUpTo:expiry}))
+  };
+  const lpj = JSON.stringify(lp);
+  const lpb64 = forge.util.encode64(forge.util.encodeUtf8(lpj));
+
+  const kp = ensureKeyPair();
+  const md = forge.md.sha1.create(); md.update(lpj, 'utf8');
+  const sig = kp.sk.sign(md);
+  const certDer = forge.asn1.toDer(forge.pki.certificateToAsn1(kp.cert)).getBytes();
+
+  const code = `${licenseId}-${lpb64}-${forge.util.encode64(sig)}-${forge.util.encode64(certDer)}`;
+
+  document.getElementById('codeDisplay').textContent = code;
+  document.getElementById('expiryLabel').textContent = expiry;
+  document.getElementById('genResult').style.display = 'block';
+  document.getElementById('genResult').scrollIntoView({behavior:'smooth'});
+  showToast('激活码已生成');
+}
+
+function copyCode() {
+  const code = document.getElementById('codeDisplay').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    document.getElementById('copiedMsg').classList.add('show');
+    setTimeout(() => document.getElementById('copiedMsg').classList.remove('show'), 2000);
+    showToast('激活码已复制！');
+  });
+}
+
+// Auto-expand step 1
+document.getElementById('step1').classList.add('active');
+</script>
+</body>
+</html>
