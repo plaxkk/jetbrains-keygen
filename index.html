@@ -114,6 +114,26 @@
   .warn { background: #2d1a1a; border-left-color: var(--red); }
   .warn strong { color: var(--red); }
 
+  /* Products overview */
+  .products-overview {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 24px; margin-bottom: 20px;
+  }
+  .po-header { display: flex; align-items: center; gap: 8px; font-size: 1rem; margin-bottom: 8px; }
+  .po-icon { font-size: 1.3rem; }
+  .po-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 14px; line-height: 1.6; }
+  .po-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 6px; margin-bottom: 14px;
+  }
+  .po-item {
+    display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    font-size: 0.82rem; color: var(--text);
+  }
+  .po-check { color: var(--green); font-weight: 700; }
+  .po-footer { font-size: 0.8rem; color: var(--orange); margin: 0; }
+
   /* AI banner */
   .ai-banner {
     background: linear-gradient(135deg, #1a1f35 0%, #1a2332 100%);
@@ -154,6 +174,32 @@
 </div>
 
 <div class="container">
+
+  <!-- ========== 支持全家桶说明 ========== -->
+  <div class="products-overview">
+    <div class="po-header">
+      <span class="po-icon">🎯</span>
+      <strong>支持 JetBrains 全系列 14 款产品 + 所有付费插件</strong>
+    </div>
+    <p class="po-desc">不勾选任何产品 = 一个激活码激活全部产品（全家桶模式）<br>勾选特定产品 = 只激活你需要的</p>
+    <div class="po-grid">
+      <div class="po-item"><span class="po-check">✓</span> IntelliJ IDEA</div>
+      <div class="po-item"><span class="po-check">✓</span> PhpStorm</div>
+      <div class="po-item"><span class="po-check">✓</span> DataGrip</div>
+      <div class="po-item"><span class="po-check">✓</span> RubyMine</div>
+      <div class="po-item"><span class="po-check">✓</span> WebStorm</div>
+      <div class="po-item"><span class="po-check">✓</span> Rider</div>
+      <div class="po-item"><span class="po-check">✓</span> CLion</div>
+      <div class="po-item"><span class="po-check">✓</span> PyCharm</div>
+      <div class="po-item"><span class="po-check">✓</span> GoLand</div>
+      <div class="po-item"><span class="po-check">✓</span> DataSpell</div>
+      <div class="po-item"><span class="po-check">✓</span> dotMemory</div>
+      <div class="po-item"><span class="po-check">✓</span> Aqua</div>
+      <div class="po-item"><span class="po-check">✓</span> RustRover</div>
+      <div class="po-item"><span class="po-check">✓</span> AppCode</div>
+    </div>
+    <p class="po-footer">💡 激活后，你电脑上所有已安装的 JetBrains IDE 都会自动识别。无需每个 IDE 单独操作。</p>
+  </div>
 
   <!-- ========== AI 懒人通道 ========== -->
   <div class="ai-banner">
