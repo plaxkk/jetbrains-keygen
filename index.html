@@ -536,7 +536,7 @@ function getSelectedSiteUrl() {
 function updateAIPrompt() {
   const siteUrl = getSelectedSiteUrl();
   document.getElementById('aiPrompt').textContent =
-    `帮我激活 JetBrains IDE（DataGrip 或任意产品）。步骤：1. 从 ${siteUrl} 下载 ja-netfilter.zip 并解压 2. 找到 IDE 的 vmoptions 文件（macOS 在 ~/Library/Application Support/JetBrains/产品名/vmoptions，Windows 在 %APPDATA%\\JetBrains\\产品名\\vmoptions）3. 在末尾添加 -javaagent:解压路径/ja-netfilter.jar 4. 打开 ${siteUrl} 生成激活码并复制 5. 重启 IDE 粘贴激活码完成激活。我需要选择的产品是：DataGrip，被授权人名字：User。`;
+    `帮我激活 JetBrains IDE。这个工具支持 IntelliJ IDEA、PyCharm、WebStorm、DataGrip、GoLand、CLion、Rider 等 JetBrains 产品；请根据我实际使用的 IDE 选择对应产品，如果我没有指定产品，就不勾选任何产品，生成全家桶激活码。步骤：1. 从 ${siteUrl} 下载 ja-netfilter.zip 并解压 2. 找到 IDE 的 vmoptions 文件（macOS 在 ~/Library/Application Support/JetBrains/产品名/vmoptions，Windows 在 %APPDATA%\\JetBrains\\产品名\\vmoptions）3. 在末尾添加 -javaagent:解压路径/ja-netfilter.jar 4. 打开 ${siteUrl} 生成激活码并复制 5. 重启 IDE 粘贴激活码完成激活。产品选择示例：如果我使用 DataGrip，就选择 DataGrip；如果我使用 PyCharm，就选择 PyCharm；也可以按我实际使用的其他 JetBrains 产品选择。被授权人名字：User。`;
 }
 
 function copyAI() {
