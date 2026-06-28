@@ -114,6 +114,35 @@
   .warn { background: #2d1a1a; border-left-color: var(--red); }
   .warn strong { color: var(--red); }
 
+  /* AI banner */
+  .ai-banner {
+    background: linear-gradient(135deg, #1a1f35 0%, #1a2332 100%);
+    border: 1px solid #2d4a7a; border-radius: 12px;
+    padding: 24px; margin-bottom: 24px;
+  }
+  .ai-banner-header { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; margin-bottom: 8px; }
+  .ai-icon { font-size: 1.4rem; }
+  .ai-badge {
+    background: linear-gradient(135deg, #58a6ff, #3fb950); color: #000;
+    font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  }
+  .ai-banner p { font-size: 0.85rem; color: var(--muted); margin-bottom: 12px; }
+  .ai-prompt-box {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; margin: 12px 0;
+  }
+  .ai-prompt-label {
+    background: #1a2235; padding: 6px 14px; font-size: 0.75rem;
+    color: var(--accent); font-weight: 600;
+  }
+  .ai-prompt-text {
+    padding: 10px 14px; font-size: 0.78rem; color: var(--text);
+    line-height: 1.7; max-height: 140px; overflow-y: auto;
+    white-space: pre-wrap; word-break: break-all;
+  }
+  .ai-copy-btn { margin: 0; border-radius: 0 0 8px 8px; border-top: 1px solid var(--border); }
+  .ai-hint { font-size: 0.8rem; color: #d2991d; margin-top: 8px; margin-bottom: 0 !important; }
+
   footer { text-align: center; padding: 32px; color: var(--muted); font-size: 0.75rem; }
   footer a { color: var(--accent); }
 </style>
@@ -125,6 +154,22 @@
 </div>
 
 <div class="container">
+
+  <!-- ========== AI 懒人通道 ========== -->
+  <div class="ai-banner">
+    <div class="ai-banner-header">
+      <span class="ai-icon">🤖</span>
+      <strong>懒人通道：让 AI 帮你全部搞定</strong>
+      <span class="ai-badge">推荐</span>
+    </div>
+    <p>如果你有 Claude Code / Cursor / Hermes Agent / Copilot CLI 等 AI 编程助手，<br>把下面这段话发给它，AI 会自动完成下载→解压→配置→激活全流程：</p>
+    <div class="ai-prompt-box">
+      <div class="ai-prompt-label">📋 复制以下 Prompt 发给 AI</div>
+      <div class="ai-prompt-text" id="aiPrompt">帮我激活 JetBrains IDE（DataGrip 或任意产品）。步骤：1. 从 https://jetbrains-keygen.vercel.app 下载 ja-netfilter.zip 并解压 2. 找到 IDE 的 vmoptions 文件（macOS 在 ~/Library/Application Support/JetBrains/产品名/vmoptions，Windows 在 %APPDATA%\JetBrains\产品名\vmoptions）3. 在末尾添加 -javaagent:解压路径/ja-netfilter.jar 4. 打开 https://jetbrains-keygen.vercel.app 生成激活码并复制 5. 重启 IDE 粘贴激活码完成激活。我需要选择的产品是：DataGrip，被授权人名字：User。</div>
+      <button class="copy ai-copy-btn" onclick="copyAI()">📋 一键复制 Prompt</button>
+    </div>
+    <p class="ai-hint">💡 你的 AI 助手会一步不差地执行，全程无需手动操作。</p>
+  </div>
 
   <!-- ========== STEP 1: Download Agent ========== -->
   <div class="step active" id="step1">
@@ -357,6 +402,11 @@ function copyCode() {
     setTimeout(() => document.getElementById('copiedMsg').classList.remove('show'), 2000);
     showToast('激活码已复制！');
   });
+}
+
+function copyAI() {
+  const text = document.getElementById('aiPrompt').textContent.trim();
+  navigator.clipboard.writeText(text).then(() => showToast('Prompt 已复制！发给 AI 即可'));
 }
 
 // Auto-expand step 1
