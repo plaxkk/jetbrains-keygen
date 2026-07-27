@@ -1,0 +1,15 @@
+{
+  "name": "jetbrains-keygen",
+  "version": "1.0.0",
+  "description": "JetBrains activation code generator for educational purposes",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["jetbrains", "keygen"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}

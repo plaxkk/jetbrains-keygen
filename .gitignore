@@ -2,3 +2,4 @@ ja-netfilter.jar
 config/
 plugins/
 .vercel
+node_modules/
