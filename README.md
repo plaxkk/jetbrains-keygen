@@ -1,6 +1,6 @@
 # 🔑 JetBrains 激活码生成器
 
-**简体中文** | [English](README.en.md)
+**简体中文** | [English](README.en.md) | [한국어](README.ko.md)
 
 仅供学习研究 · 请支持正版 · 三步完成激活
 
@@ -112,3 +112,13 @@ vmoptions 常见位置：macOS 在 ~/Library/Application Support/JetBrains/产�
 - **开源协议：** ja-netfilter 及本网站代码基于 MIT 协议开源，仅供非商业研究使用。
 
 仅供学习与研究使用 · 请支持 [JetBrains](https://www.jetbrains.com/) 正版
+
+## 多语言页面维护
+
+中文、英文、韩语页面分别位于 `/`、`/en/`、`/ko/`。中文源文件为 `index.html`，翻译文案位于 `locales/en.json` 和 `locales/ko.json`。修改后运行：
+
+```bash
+python3 scripts/build-locales.py
+```
+
+该命令重新生成英文、韩语静态页面及站点地图。`en/index.html` 和 `ko/index.html` 为生成文件，请勿直接编辑。动态提示和 AI 提示词在 `index.html` 中维护。发布前请将生成结果一并提交。

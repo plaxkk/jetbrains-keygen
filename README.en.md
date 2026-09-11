@@ -1,6 +1,6 @@
 # 🔑 JetBrains Activation Code Generator
 
-[简体中文](README.md) | **English**
+[简体中文](README.md) | **English** | [한국어](README.ko.md)
 
 For learning & research only · Buy official licenses · Activate in 3 steps
 
@@ -112,3 +112,13 @@ If I haven't explicitly said which product I want, ask me whether I'm activating
 - **Open source:** ja-netfilter and the site code are open source under the MIT license, for non-commercial research only.
 
 For learning & research only · Please support [JetBrains](https://www.jetbrains.com/) with an official license
+
+## Maintaining language pages
+
+Chinese, English and Korean have independent pages at `/`, `/en/` and `/ko/`. Edit the Chinese source in `index.html` and translations in `locales/en.json` and `locales/ko.json`, then run:
+
+```bash
+python3 scripts/build-locales.py
+```
+
+This regenerates both translated static pages and the sitemap. Do not edit `en/index.html` or `ko/index.html` directly. Dynamic messages and AI prompts are maintained in `index.html`. Commit generated files before deployment.
