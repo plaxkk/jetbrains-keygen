@@ -1,6 +1,6 @@
 # 🔑 JetBrains 激活码生成器
 
-**简体中文** | [English](README.en.md) | [한국어](README.ko.md)
+**简体中文** | [English](README.en.md) | [한국어](README.ko.md) | [Русский](README.ru.md)
 
 仅供学习研究 · 请支持正版 · 三步完成激活
 

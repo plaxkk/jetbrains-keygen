@@ -11,6 +11,7 @@ import re
 
 ROOT = Path(__file__).resolve().parent.parent
 BASE = "https://jetbrains-keygen.kkplayit.online/"
+LOCALES = {"en": "en_US", "ko": "ko_KR", "ru": "ru_RU"}
 VOID = set("area base br col embed hr img input link meta param source track wbr".split())
 
 
@@ -57,7 +58,7 @@ class Translate(HTMLParser):
                 "twitter:description": self.messages["metaDescription"],
                 "og:site_name": self.messages["siteName"],
                 "og:url": BASE + self.locale + "/",
-                "og:locale": "ko_KR" if self.locale == "ko" else "en_US",
+                "og:locale": LOCALES[self.locale],
             }
             if key in values:
                 attrs["content"] = values[key]
@@ -102,7 +103,7 @@ class Translate(HTMLParser):
 def build():
     source = (ROOT / "index.html").read_text()
     keys = set(re.findall(r'data-i18n(?:-html|-code|-ph|-aria)?="([^"]+)"', source))
-    for locale in ("en", "ko"):
+    for locale in LOCALES:
         messages = json.loads((ROOT / "locales" / f"{locale}.json").read_text())
         assert keys <= messages.keys(), f"Missing {locale} translations: {keys - messages.keys()}"
         result = Translate(source, messages, locale).render()
@@ -110,7 +111,7 @@ def build():
         (ROOT / locale / "index.html").write_text(result)
         print(f"Built /{locale}/ ({len(keys)} translation keys)")
 
-    urls = [BASE, BASE + "en/", BASE + "ko/"]
+    urls = [BASE] + [BASE + locale + "/" for locale in LOCALES]
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sitemap += "".join(f"  <url><loc>{url}</loc></url>\n" for url in urls)
     (ROOT / "sitemap.xml").write_text(sitemap + "</urlset>\n")

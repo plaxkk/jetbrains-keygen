@@ -1,6 +1,6 @@
 # 🔑 JetBrains 라이선스 코드 생성기
 
-[简体中文](README.md) | [English](README.en.md) | **한국어**
+[简体中文](README.md) | [English](README.en.md) | **한국어** | [Русский](README.ru.md)
 
 학습·연구 전용 · 정품 사용을 권장합니다 · 3단계 설정
 

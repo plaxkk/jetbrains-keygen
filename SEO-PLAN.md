@@ -2,6 +2,21 @@
 
 检查日期：2026-09-11。主站：https://jetbrains-keygen.kkplayit.online/
 
+## 俄文版本与 Yandex（2026-09-11）
+
+- 俄文页面 `/ru/` 和 README.ru.md 已完成；四种语言导航互链，俄文使用 `lang=ru`、`og:locale=ru_RU`、独立 canonical 与俄文标题、摘要、JSON-LD。
+- sitemap.xml 包含中文、英文、韩文、俄文四个规范网址；robots.txt 允许 Yandex 抓取并声明站点地图。
+- Yandex Webmaster 已通过 Meta tag 验证，后台显示当前账号为 Owner，验证日期为 2026-09-11。
+- 已向 Yandex Webmaster 提交 sitemap.xml，后台显示 Processing queue，等待处理。
+- 已调用 Yandex IndexNow 接口提交四个语言页面，返回 `HTTP 202` 和 `success: true`。表示提交已接收、密钥校验待处理，不代表页面已经收录。
+- 四语言静态元数据、hreflang、唯一 ID、俄文正文无中韩文残留（语言导航除外）、JS 语法检查通过；线上首页、俄文页、站点地图返回 200，内容与发布文件一致。
+- 浏览器启用了俄文自动翻译，检查时可见页面被翻成中文；服务器返回的原始 HTML 为完整俄文。查看实际俄文排版时需在浏览器选择“显示原文”。
+- 本站是面向各地用户的在线工具，未虚构俄罗斯地址或强行设置城市地域。后续在 Webmaster 的 Searchable pages、Crawl statistics 与搜索表现中观察抓取和曝光。
+
+官方文档：https://yandex.com/support/webmaster/en/indexnow/reference
+
+此前 Bing 和 Naver 的剩余步骤，用户已在本次俄文工作开始前确认完成。
+
 ## 最新执行状态（2026-09-11）
 
 - 已发布到 Vercel 生产环境，中文 `/`、英文 `/en/`、韩语 `/ko/` 均返回 HTTP 200，线上 HTML 与本地生成结果一致。

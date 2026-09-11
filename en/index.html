@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="naver-site-verification" content="c15ea3a58ee4e244c4d14943a65673ceb7b87606">
 <meta name="msvalidate.01" content="DE5EBA368085EBACDC37DFE16D13D452">
+<meta name="yandex-verification" content="0a7b589c6203ef5a">
 <meta name="theme-color" content="#0d1117">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg">
@@ -14,6 +15,7 @@
 <link rel="alternate" hreflang="zh-Hans" href="https://jetbrains-keygen.kkplayit.online/">
 <link rel="alternate" hreflang="en" href="https://jetbrains-keygen.kkplayit.online/en/">
 <link rel="alternate" hreflang="ko" href="https://jetbrains-keygen.kkplayit.online/ko/">
+<link rel="alternate" hreflang="ru" href="https://jetbrains-keygen.kkplayit.online/ru/">
 <link rel="alternate" hreflang="x-default" href="https://jetbrains-keygen.kkplayit.online/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="JetBrains License Generator (Unofficial)">
@@ -253,6 +255,7 @@
     <a href="/" hreflang="zh-Hans" lang="zh-CN">中文</a>
     <a href="/en/" hreflang="en" lang="en" aria-current="page">EN</a>
     <a href="/ko/" hreflang="ko" lang="ko">한국어</a>
+    <a href="/ru/" hreflang="ru" lang="ru">Русский</a>
   </nav>
   <h1 data-i18n="headerTitle">🔑 JetBrains License Generator</h1>
   <p data-i18n="headerSub">For learning &amp; research only · Support the official version · Activate in 3 steps</p>
@@ -440,6 +443,7 @@ Add-Content "$env:APPDATA\JetBrains\ProductName202x.x\ProductName.vmoptions" "`n
 // The URL determines the language; translated HTML is generated at build time.
 // Short JS-generated messages (toasts etc.)
 var MSG = {
+  ru: { copied: 'Скопировано', copyFail: 'Не удалось скопировать. Скопируйте вручную.', genOk: 'Код активации создан', codeCopied: 'Код скопирован!', promptCopied: 'Запрос скопирован. Передайте его ИИ-ассистенту.' },
   zh: { copied: '已复制', copyFail: '复制失败，请手动复制', genOk: '激活码已生成', codeCopied: '激活码已复制！', promptCopied: 'Prompt 已复制！发给 AI 即可' },
   ko: { copied: '복사됨', copyFail: '복사하지 못했습니다. 직접 복사해 주세요.', genOk: '라이선스 코드가 생성되었습니다.', codeCopied: '라이선스 코드를 복사했습니다!', promptCopied: '프롬프트를 복사했습니다. AI에게 전달하세요.' },
   en: { copied: 'Copied', copyFail: 'Copy failed — please copy manually', genOk: 'License code generated', codeCopied: 'License code copied!', promptCopied: 'Prompt copied! Send it to your AI' }
@@ -592,6 +596,19 @@ function getSelectedSiteUrl() {
 
 function promptLines(lang) {
   const siteUrl = getSelectedSiteUrl();
+  if (lang === 'ru') {
+    return [
+      'Помогите настроить локальную среду для обучения и исследований JetBrains IDE.',
+      `Адрес инструмента: ${siteUrl}`,
+      `Продукты: ${PRODUCTS.map(p => p.name).join(', ')} и платные плагины JetBrains.`,
+      'Сначала уточните, какие продукты мне нужны:',
+      '1. Для одного продукта выберите только его в списке на странице и создайте код.',
+      '2. Для всего набора снимите все отметки и создайте код для всех продуктов.',
+      `Порядок действий: скачайте ja-netfilter.zip со страницы ${siteUrl} и распакуйте архив; найдите файл vmoptions IDE; добавьте в конец строку -javaagent:<путь-к-агенту>/ja-netfilter.jar; перезапустите IDE; создайте код на сайте и вставьте его в поле Activation code окна активации.`,
+      'Путь к файлу vmoptions можно узнать через меню Help → Edit Custom VM Options... в IDE.',
+      'Если я не указал продукт, сначала спросите, нужен ли один продукт или весь набор. Не выбирайте продукт за меня. Используйте имя User, если я не указал другое.'
+    ];
+  }
   if (lang === 'ko') {
     const n = PRODUCTS.map(p => p.name).join(', ');
     return [

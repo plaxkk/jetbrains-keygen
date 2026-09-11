@@ -1,6 +1,6 @@
 # 🔑 JetBrains Activation Code Generator
 
-[简体中文](README.md) | **English** | [한국어](README.ko.md)
+[简体中文](README.md) | **English** | [한국어](README.ko.md) | [Русский](README.ru.md)
 
 For learning & research only · Buy official licenses · Activate in 3 steps
 
